@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Control Demo</title>
+</head>
+<body>
+    <h1>Welcome to the Demo</h1>
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="button" onclick="login()">Login</button>
+    </form>
+
+    <script>
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Send a login request to the server
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ username, password }),
+                });
+
+                // Check the response and handle accordingly
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message);
+                    // Redirect based on role
+                    if (result.message.includes('admin')) {
+                        window.location.href = '/admin/dashboard';
+                    } else {
+                        window.location.href = '/home';
+                    }
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.message}`);
+                }
+            } catch (error) {
+                console.error('An error occurred:', error);
+            }
+        }
+    </script>
+</body>
+</html>
